@@ -2,9 +2,11 @@
 
     var pluginName = "fullScreenHeader",
         defaults = {
+          fsContainerSelector: '#fs-header-container',
           imgSelector: '.fs-header-image',
-          windowResizeCallback: function(){},
-          windowScrollCallback: function(){}
+          onInit: function(){},
+          onResize: function(){},
+          onScroll: function(){}
         };
 
     function Plugin( element, options ) {
@@ -21,15 +23,15 @@
     Plugin.prototype = {
 
         init: function() {
-            var self = this;
 
-            this.$paddingElement = $('<div></div>').attr('id', 'fs-header-before').css({height: 0}).height($('#fs-header-container').height());
+            this.$paddingElement = $('<div></div>').attr('id', 'fs-header-before').css({height: 0});
+            this.$paddingElement.height( $(this.options.fsContainerSelector).height() );
 
-            $('#fs-header-container').after(this.$paddingElement);
+            $(this.options.fsContainerSelector).after(this.$paddingElement);
 
             // Properties to cache
-            this.imageAspect = null;
-            this.headerImage = null;
+            this._imageAspect = null;
+            this._headerImage = null;
 
             // Initialization functions
             this.calculateImageAspect();
@@ -40,65 +42,36 @@
             $(window).on('resize', $.proxy(this.windowResize, this));
             $(window).on('scroll', $.proxy(this.windowScroll, this));
 
-            // Start the show
-            this.openSplash();
+
+            this.options.onInit.call( this, this.getHeaderImage() );
         },
 
         calculateImageAspect: function(){
-          if(!this.imageAspect){
+          if(!this._imageAspect){
             $headerImage = this.getHeaderImage();
-            this.imageAspect = $headerImage.width() / $headerImage.height();
+            this._imageAspect = $headerImage.width() / $headerImage.height();
           }
-          return this.imageAspect;
+          return this._imageAspect;
         },
 
         getHeaderImage: function(){
-          if(!this.headerImage){
-            this.headerImage = this.$element.find(this.options.imgSelector);
+          if(!this._headerImage){
+            this._headerImage = this.$element.find(this.options.imgSelector);
           }
-          return this.headerImage;
-        },
-
-        openSplash: function(){
-          var $image = this.getHeaderImage();
-          
-          $image.css({
-            opacity: 1,
-            "-webkit-transform": "scale(1)",
-            "-moz-transform": "scale(1)",
-            "-o-transform": "scale(1)",
-            "-ms-transform": "scale(1)",
-            transform: "scale(1)"
-          });
-
+          return this._headerImage;
         },
 
         windowResize: function(){
-          this.$paddingElement.height($('#fs-header-container').height());
+          var containerHeight = $(this.options.fsContainerSelector).height();
+
+          this.$paddingElement.height( containerHeight );
           this.imageFill();
 
-          this.options.windowResizeCallback();
+          this.options.onResize.call( this, this.getHeaderImage());
         },
 
         windowScroll: function(){
-          var opacityAmount = ($(window).scrollTop() / parseInt(this.$paddingElement.height(), 10)),
-              zoomAmount = 1 + opacityAmount / 16;
-
-          if(opacityAmount < 1){
-            var $image = this.getHeaderImage();
-
-            $image.css({
-              opacity: 1 - opacityAmount,
-              "-webkit-transform": "scale(" + zoomAmount + ")",
-              "-moz-transform": "scale(" + zoomAmount + ")",
-              "-o-transform": "scale(" + zoomAmount + ")",
-              "-ms-transform": "scale(" + zoomAmount + ")",
-              transform: "scale(" + zoomAmount + ")"
-            });
-
-          }
-
-          this.options.windowScrollCallback();
+          this.options.onScroll.call( this, this.getHeaderImage(), this.$paddingElement );
         },
 
         imageFill: function(){

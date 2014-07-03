@@ -10,7 +10,7 @@
     </head>
     <body>
         <div id="fs-header-container" class="fs-header-container">
-            <div id="splash" class="fs-header-wrap">
+            <div id="fs-header" class="fs-header-wrap">
                 <div class="fs-header-image-wrap">
                     <img class="fs-header-image" src="/assets/images/bg0.jpeg">
                 </div>
@@ -18,12 +18,53 @@
         </div>
         <div id="container">
             <!-- Place the rest of the page down here -->
+            <h2 style="text-align:center; padding: 100px 0;">
+              Full Screen Header Demo
+            </h2>
         </div>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="assets/vendor/jquery-1.10.2.min.js"><\/script>')</script>
         <script src="build/app.min.js"></script>
         <script type="text/javascript">
-            $('#splash').fullScreenHeader();
+
+            // Ex. Initialize Callback
+            var init = function($headerImage){
+              $headerImage.css({
+                opacity: 1,
+                "-webkit-transform": "scale(1)",
+                "-moz-transform": "scale(1)",
+                "-o-transform": "scale(1)",
+                "-ms-transform": "scale(1)",
+                transform: "scale(1)"
+              });
+            };
+
+            // Ex. Scroll Callback
+            var scroll = function($headerImage, $paddingElement){
+
+              var opacityAmount = ($(window).scrollTop() / parseInt($paddingElement.height(), 10)),
+                  zoomAmount = 1 + opacityAmount / 16;
+
+              if(opacityAmount < 1){
+
+                $headerImage.css({
+                  opacity: 1 - opacityAmount,
+                  "-webkit-transform": "scale(" + zoomAmount + ")",
+                  "-moz-transform": "scale(" + zoomAmount + ")",
+                  "-o-transform": "scale(" + zoomAmount + ")",
+                  "-ms-transform": "scale(" + zoomAmount + ")",
+                  transform: "scale(" + zoomAmount + ")"
+                });
+
+              }
+            };
+
+            // Call the plugin with the options
+            $('#fs-header').fullScreenHeader({
+              onInit: init,
+              onScroll: scroll
+            });
+
         </script>
     </body>
 </html>
