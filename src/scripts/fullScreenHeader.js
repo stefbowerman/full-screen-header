@@ -1,9 +1,11 @@
-;(function ( $, window, document, undefined ) {
+;(function ( $, window, undefined ) {
 
     var pluginName = "fullScreenHeader",
         defaults = {
           fsContainerSelector: '#fs-header-container',
-          imgSelector: '.fs-header-image',
+          fsPaddingId: 'fs-header-padding',
+          fsPaddingClass: '',
+          fsImgSelector: '.fs-header-image',
           onInit: function(){},
           onResize: function(){},
           onScroll: function(){}
@@ -24,7 +26,7 @@
 
         init: function() {
 
-            this.$paddingElement = $('<div></div>').attr('id', 'fs-header-before').css({height: 0});
+            this.$paddingElement = $('<div></div>').attr('id', this.options.fsPaddingId).addClass(this.options.fsPaddingClass).css({height: 0});
             this.$paddingElement.height( $(this.options.fsContainerSelector).height() );
 
             $(this.options.fsContainerSelector).after(this.$paddingElement);
@@ -56,7 +58,7 @@
 
         getHeaderImage: function(){
           if(!this._headerImage){
-            this._headerImage = this.$element.find(this.options.imgSelector);
+            this._headerImage = this.$element.find(this.options.fsImgSelector);
           }
           return this._headerImage;
         },
@@ -82,7 +84,7 @@
               aspect = this.imageAspect,
               newCss;
 
-          $splashImage = this.getHeaderImage();
+          $headerImage = this.getHeaderImage();
 
           if(windowAspect < aspect){
             newCss = {
@@ -101,7 +103,7 @@
             };
           }
 
-          $splashImage.css( newCss );
+          $headerImage.css( newCss );
 
         }
     };
@@ -115,4 +117,4 @@
         });
     };
 
-})( jQuery, window, document );
+})( jQuery, window );
