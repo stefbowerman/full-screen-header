@@ -81,7 +81,7 @@
               windowHeight = $win.height(),
               windowWidth = $win.width(),
               windowAspect = windowWidth / windowHeight,
-              aspect = this.imageAspect,
+              aspect = this._imageAspect,
               newCss;
 
           $headerImage = this.getHeaderImage();

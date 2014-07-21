@@ -2,6 +2,8 @@
 
 Simplest possible way to have a full screen header that responds to browser resizing.  All page content is contained below the height of the screen.
 
+![alt tag](https://raw.github.com/stefbowerman/full-screen-header/master/demo.gif)
+
 ##Initialization
 All you need to do is call the plugin inside a `$(document).ready` function:
 
